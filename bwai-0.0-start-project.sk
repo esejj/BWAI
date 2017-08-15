@@ -1,0 +1,29 @@
+# Bot with artificial intelligence. // script created by esejj
+# File configuration in version v0.1 - official release.
+
+options:
+
+	bot: villager
+
+	name_of_bot: &8» &3Sztuczny &a&lJanusz
+
+	all_function: 2
+
+	chance1: 25
+	function1: give 1 glowing diamond named "&bDiament &7od &aJanusza" to player
+	message1: &8» &aOtrzymales &71 &bdiament &7od &aJanusza
+
+	chance2: 50
+	function2: kick player due to "&8» &aJanusz cie uderzyl... &7Troche daleko &cpoleciales ;/"
+
+on right click:
+	target-entity is {@bot}:
+		distance between player and target-entity <= 6:
+			cancel event
+			loop {@all_function} times:
+				chance of {@chance%loop-number%}:
+					{@function%loop-number%}
+					send "{@message%loop-number%}" to the player
+		else:
+			send "&8» &7{@name_of_bot} &cjest za daleko." to the player
+	stop
