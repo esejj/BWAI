@@ -1,0 +1,67 @@
+# Bot with artificial intelligence. // script created by esejj
+# File configuration in version v0.1 - official release.
+
+on load:
+	folder "plugins/BWAI" doesn't exists:
+		create folder "plugins/BWAI"
+		create file "plugins/BWAI/config.yml"
+		create file "plugins/BWAI/messages.yml"
+		create file "plugins/BWAI/function.yml"
+		wf "bot: 'villager'" to "plugins/BWAI/config.yml"
+		wf "name_of_bot: '&8» &3Sztuczny &a&lJanusz'" to "plugins/BWAI/config.yml"
+		wf "message1: '&8» &aOtrzymales &71 &bdiament &7od &aJanusza'" to "plugins/BWAI/messages.yml"
+		wf "message2: ''" to "plugins/BWAI/messages.yml"
+		wf "all_function: '2'" to "plugins/BWAI/function.yml"
+		wf "function1: 'give 1 glowing diamond named ""&bDiament &7od &aJanusza""'" to "plugins/BWAI/function.yml"
+		wf "function2: 'kick player due to ""&8» &aJanusz cie uderzyl... &7Troche daleko &cpoleciales ;/""'" to "plugins/BWAI/function.yml"
+		wf "chance1: '25' // szansa" to "plugins/BWAI/function.yml"
+		wf "chance2: '50' // szansa 2" to "plugins/BWAI/function.yml"
+	set {bot} to single value "bot" get of "plugins/BWAI/config.yml"
+	set {name_of_bot} to single value "name_of_bot" get of "plugins/BWAI/config.yml"
+	set {all_function} to single value "all_function" get of "plugins/BWAI/function.yml"
+	loop {all_function} times:
+		set {function%loop-number%} to single value "function%loop-number%" get of "plugins/BWAI/function.yml"
+		set {chance%loop-number%} to single value "chance%loop-number%" get of "plugins/BWAI/function.yml"
+		set {message%loop-number%} to single value "message%loop-number%" get of "plugins/BWAI/messages.yml" 
+
+on right click on villager:
+	if name of clicked entity is "%{name_of_bot}%":
+		cancel event
+		loop {all_function} times:
+			set {_num} to a random integer between 1 and {all_function}
+			{_num} = 1:
+				"%{function%loop-number%}%" contains "give":
+					replace all "give " with "" in {function%loop-number%}
+					loop 1000 times:
+						if {function%loop-number-2%} contains "%loop-number-2%":
+							set {_amount} to loop-number-2
+					replace all "%{_amount}%" with "" in {function%loop-number%}
+					set {function%loop-number%} to {function%loop-number%}
+					give {_amount} of {function%loop-number%} to player
+					send "%{message%loop-number%}%" to the player
+			{_num} = 2:
+				"%{function%loop-number%}%" contains "kick":
+					replace all "kick player due to " with "" in {function%loop-number%}
+					kick player due to {function%loop-number%}
+					send "%{message%loop-number%}%" to the player
+		player are sneaking:
+			player has permission "es.bwai.edit":
+				cancel event
+				open chest with 1 rows named "%{name_of_bot}%" to the player
+				format slot 4 of player with paper named "Tu cos bedzie" to be unstealable
+			else:
+				cancel event
+				send "&8» &cNie mozesz kucac" to the player
+		stop
+	stop
+command /esej:bwai [<text>]:
+	description: Bot with artificial intelligence.
+	aliases: /bwai
+	permission: es.bwai.command
+	trigger:
+		argument 1 is "create":
+			spawn 1 villager at player
+			set name of last spawned entity to "%{name_of_bot}%"
+			send "&8» &7Utworzyles &esztuczna inteligencje" to the player
+		argument 1 isn't set:
+			send "&8» &7Poprzez ta komende mozna stworzyc sztuczna inteligencje dlatego uzyj argumentu; &6create" to the player
